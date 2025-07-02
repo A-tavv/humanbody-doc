@@ -45,7 +45,7 @@ This is a repository that provides a structured knowledge base of human body org
 ## Getting Started
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/A-tavv/BodyMap.git
+   git clone https://github.com/A-tavv/HumanBody-doc.git
    ```
 2. **Explore the Organ Data**
    - Browse Markdown files for detailed descriptions.
