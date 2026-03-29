@@ -21,7 +21,7 @@ HumanBodyDoc is a structured, visual knowledge base of the human body covering o
 | 🫁 **Anatomy Breakdown** | Each organ lists all its anatomical subparts (e.g. Eye → Cornea, Retina, Fovea, Iris...) |
 | 🖼️ **Medical Images** | Real anatomical illustrations per organ |
 | 🗂️ **System Tabs** | Filter by body system: Nervous, Cardiovascular, Respiratory, Digestive, and more |
-| 📦 **Zero Dependencies** | Single `index.html` file — no frameworks, no build step, no backend |
+| 📦 **Zero Dependencies** | Single `index.html` file no frameworks, no build step, no backend |
 
 ---
 
