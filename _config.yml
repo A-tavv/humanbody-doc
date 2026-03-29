@@ -1,0 +1,8 @@
+title: BodyAtlas
+description: An open-source interactive reference of human anatomy, diseases, and treatments.
+url: "https://a-tavv.github.io"
+baseurl: "/humanbody-doc"
+
+# GitHub Pages settings
+theme: null
+plugins: []

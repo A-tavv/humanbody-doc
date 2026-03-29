@@ -1,61 +1,111 @@
-# Human Body in detail
+# 🫀 BodyAtlas — Human Body Explorer
 
-## Overview
-This is a repository that provides a structured knowledge base of human body organs, *their functions*, *symptoms of diseases*, and *underlying causes*.
+> An open-source, interactive reference of human anatomy, diseases, and treatments — built as a single, deployable HTML file.
+
+**[🌐 Live Site](https://a-tavv.github.io/humanbody-doc)** &nbsp;|&nbsp; **[📁 Source](https://github.com/A-tavv/humanbody-doc)**
+
+---
+
+## What is BodyAtlas?
+
+BodyAtlas is a structured, visual knowledge base of the human body — covering organs, their anatomical parts, associated diseases, symptoms, and known treatments. It's designed for students, curious learners, and anyone who wants a clean, searchable medical reference without the noise of Wikipedia or the paywall of medical databases.
+
+---
 
 ## Features
--  **Comprehensive Anatomy Data** – Covers all major human organs and their subfields.
--  **Medical Symptoms & Causes** – Lists diseases, symptoms, and contributing factors.
--  **Structured Data Format** – Organized in Markdown and JSON for ease of use.
--  **Searchable & Expandable** – Future API integrations and web app potential.
 
-## Repository Structure
-```
-/organ_data
-  ├── Upper/
-  │     ├── brain.md
-  │     ├── eyes.md
-  │     ├── ears.md
-  │     ├── nose.md
-  │     ├── mouth.md
-  │     ├── throat.md
-  │
-  ├── Middle/
-  │     ├── heart.md
-  │     ├── lungs.md
-  │     ├── stomach.md
-  │     ├── liver.md
-  │     ├── kidneys.md
-  │     ├── pancreas.md
-  │     ├── hand
-  │     ├── chest
-  │
-  ├── Bottom/
-  │     ├── intestines.md
-  │     ├── bladder.md
-  │     ├── reproductive_organs.md
-  │     ├── legs.md
-  │     ├── feet.md
-  │
-  ├── organ_data.json  # Structured database format
-  ├── README.md  # Project documentation
+| Feature | Description |
+|---|---|
+| 🔍 **Smart Search** | Search across organs, diseases, anatomy parts, and treatments instantly |
+| 🌿 **Disease → Cure Tree** | Every disease expands to reveal medications, vaccines, surgery options, therapy, and lifestyle changes |
+| 🫁 **Anatomy Breakdown** | Each organ lists all its anatomical subparts (e.g. Eye → Cornea, Retina, Fovea, Iris...) |
+| 🖼️ **Medical Images** | Real anatomical illustrations per organ |
+| 🗂️ **System Tabs** | Filter by body system: Nervous, Cardiovascular, Respiratory, Digestive, and more |
+| 📦 **Zero Dependencies** | Single `index.html` file — no frameworks, no build step, no backend |
 
-```
+---
+
+## Organs Covered
+
+| System | Organs |
+|---|---|
+| 🧠 Nervous | Brain, Spinal Cord |
+| ❤️ Cardiovascular | Heart |
+| 🫁 Respiratory | Lungs |
+| 🍽️ Digestive | Liver, Stomach |
+| 👁️ Sensory | Eye, Ear |
+| 🦴 Musculoskeletal | Bones |
+| 🧴 Integumentary | Skin |
+| 💧 Urinary | Kidneys |
+| 🦋 Endocrine | Thyroid |
+
+> More organs being added — contributions welcome!
+
+---
 
 ## Getting Started
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/A-tavv/HumanBody-doc.git
-   ```
-2. **Explore the Organ Data**
-   - Browse Markdown files for detailed descriptions.
-   - Access `organ_data.json` for structured information.
 
-3. **Contribute**
-Every little detail you add would be greatly appreciated. It's one of the primary goals of this repository so Let’s stay mindful of our health journey together.
-feel free to open issues and submit pull request.
+No installation needed. Just open `index.html` in any browser.
+
+```bash
+git clone https://github.com/A-tavv/humanbody-doc.git
+cd humanbody-doc
+open index.html   # macOS
+# or double-click index.html on Windows/Linux
+```
+
+---
+
+## Deployment (GitHub Pages)
+
+This project is designed to deploy for free on GitHub Pages:
+
+1. Fork or clone the repo
+2. Go to **Settings → Pages**
+3. Set Source to **main branch / root**
+4. Your site will be live at `https://<your-username>.github.io/humanbody-doc`
+
+---
+
+## Project Structure
+
+```
+humanbody-doc/
+├── index.html        ← The entire app (HTML + CSS + JS + data)
+├── README.md         ← This file
+├── CONTRIBUTING.md   ← How to contribute new organs or diseases
+└── LICENSE           ← MIT License
+```
+
+---
+
+## Contributing
+
+We welcome contributions — especially:
+- New organs and body systems
+- Additional diseases, symptoms, and treatments
+- Translations (Arabic, Persian, French, etc.)
+- Better medical images or diagrams
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed instructions.
+
+---
+
+## Roadmap
+
+- [ ] Clickable 3D body diagram as entry point
+- [ ] Persian (فارسی) and Arabic language support
+- [ ] Drug interaction checker
+- [ ] Printable organ fact sheets (PDF)
+- [ ] Mobile app (PWA)
+- [ ] Community-sourced disease data via GitHub Issues
+
+---
 
 ## License
-This project is licensed under the MIT License.
 
+[MIT](./LICENSE) — free to use, share, and build on.
 
+---
+
+<p align="center">Made with ❤️ for health education · <a href="https://a-tavv.github.io/humanbody-doc">bodyatlas.github.io</a></p>

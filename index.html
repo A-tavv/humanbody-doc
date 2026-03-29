@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Human Body Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FFF9F3;
+  --card-bg:#FFFFFF;
+  --text:#1a1a2e;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --shadow:0 4px 24px rgba(0,0,0,0.08);
+  --radius:16px;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+header{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(0,0,0,0.06);
+}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;padding:1rem 0}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#FF6B6B,#FF8E53);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.logo-text{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--text);font-weight:700}
+.logo-text span{color:#FF6B6B}
+.search-wrap{flex:1;position:relative;max-width:500px}
+.search-wrap input{width:100%;padding:10px 16px 10px 42px;border:1.5px solid var(--border);border-radius:50px;font-family:'Nunito',sans-serif;font-size:14px;outline:none;background:#f9fafb;transition:.2s}
+.search-wrap input:focus{border-color:#FF6B6B;background:#fff}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none}
+.search-results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);max-height:320px;overflow-y:auto;display:none;z-index:200}
+.search-results.active{display:block}
+.search-item{padding:10px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:.15s}
+.search-item:hover{background:#f9fafb}
+.search-item-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.search-item-name{font-weight:700;font-size:14px}
+.search-item-sub{font-size:12px;color:var(--muted)}
+
+/* SYSTEM TABS */
+.system-tabs{background:#fff;border-bottom:1px solid var(--border);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+.system-tabs::-webkit-scrollbar{height:3px}
+.system-tabs::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:3px}
+.tabs-inner{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;gap:4px;padding-top:8px;padding-bottom:0}
+.tab-btn{
+  padding:8px 18px;border:none;background:none;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
+  color:var(--muted);border-radius:10px 10px 0 0;transition:.2s;
+  white-space:nowrap;border-bottom:3px solid transparent;
+}
+.tab-btn:hover{color:var(--text);background:#f9fafb}
+.tab-btn.active{color:var(--text);border-bottom-color:currentColor}
+
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:2rem}
+
+/* SECTION HEADER */
+.section-header{margin-bottom:1.5rem;display:flex;align-items:center;gap:12px}
+.section-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700}
+.section-badge{padding:4px 14px;border-radius:50px;font-size:12px;font-weight:800;letter-spacing:.5px}
+
+/* ORGAN CARDS GRID */
+.organs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+
+/* ORGAN CARD */
+.organ-card{
+  background:var(--card-bg);border-radius:var(--radius);
+  box-shadow:var(--shadow);cursor:pointer;
+  transition:.25s;overflow:hidden;
+  border:1.5px solid transparent;
+}
+.organ-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,0.13)}
+.card-banner{height:130px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.card-banner img{width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15));transition:.3s}
+.organ-card:hover .card-banner img{transform:scale(1.1)}
+.card-body{padding:14px 16px}
+.card-name{font-weight:800;font-size:1rem;margin-bottom:4px}
+.card-parts-count{font-size:12px;color:var(--muted);margin-bottom:8px}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px}
+.card-tag{padding:2px 8px;border-radius:50px;font-size:11px;font-weight:700}
+.card-disease-count{margin-top:8px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.45);
+  z-index:500;display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:.3s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:#fff;border-radius:28px 28px 0 0;
+  width:100%;max-width:760px;max-height:90vh;overflow-y:auto;
+  transform:translateY(40px);transition:.3s;
+  padding-bottom:2rem;
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:24px 28px 0;position:relative}
+.modal-close{
+  position:absolute;right:20px;top:20px;
+  width:34px;height:34px;border-radius:50%;
+  border:none;background:#f3f4f6;cursor:pointer;
+  font-size:18px;display:flex;align-items:center;justify-content:center;
+  transition:.2s;
+}
+.modal-close:hover{background:#e5e7eb}
+.modal-organ-header{display:flex;align-items:center;gap:16px;margin-bottom:1rem}
+.modal-organ-img{width:70px;height:70px;object-fit:contain}
+.modal-organ-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700}
+.modal-organ-system{font-size:13px;font-weight:700;margin-top:2px}
+.modal-desc{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:1.2rem;padding:0 28px}
+
+/* MODAL TABS */
+.modal-tabs{display:flex;gap:0;padding:0 28px;border-bottom:1.5px solid var(--border);margin-bottom:1.2rem}
+.modal-tab{padding:8px 20px;border:none;background:none;cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1.5px;transition:.2s}
+.modal-tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.modal-content{padding:0 28px}
+
+/* ANATOMY SECTION */
+.anatomy-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.2rem}
+.anatomy-part{
+  padding:6px 14px;border-radius:50px;
+  font-size:13px;font-weight:700;cursor:default;
+  transition:.2s;
+}
+.anatomy-img-row{display:flex;gap:12px;margin-bottom:1.2rem;overflow-x:auto}
+.anatomy-img-card{flex:0 0 auto;width:140px;border-radius:12px;overflow:hidden;border:1.5px solid var(--border)}
+.anatomy-img-card img{width:100%;height:100px;object-fit:cover}
+.anatomy-img-card-label{padding:6px;font-size:11px;font-weight:700;text-align:center;background:#f9fafb;color:var(--muted)}
+
+/* DISEASE TREE */
+.disease-list{display:flex;flex-direction:column;gap:10px}
+.disease-item{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s}
+.disease-item:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+.disease-header{padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;background:#fafafa}
+.disease-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.disease-name{font-weight:800;font-size:14px;flex:1}
+.disease-type-badge{padding:2px 10px;border-radius:50px;font-size:11px;font-weight:700}
+.disease-arrow{font-size:12px;color:var(--muted);transition:.3s}
+.disease-item.open .disease-arrow{transform:rotate(180deg)}
+.disease-body{display:none;padding:12px 16px;background:#fff;border-top:1px solid var(--border)}
+.disease-item.open .disease-body{display:block}
+.disease-body-inner{display:flex;flex-direction:column;gap:10px}
+.cure-section-title{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.cure-pills{display:flex;flex-wrap:wrap;gap:6px}
+.cure-pill{padding:5px 12px;border-radius:50px;font-size:12px;font-weight:700;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.cure-pill.vaccine{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.cure-pill.surgery{background:#fef3c7;color:#92400e;border-color:#fde68a}
+.cure-pill.lifestyle{background:#fdf4ff;color:#7e22ce;border-color:#e9d5ff}
+.cure-pill.therapy{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+.disease-symptoms{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--muted)}
+.empty-state-emoji{font-size:3rem;margin-bottom:1rem}
+.empty-state-text{font-size:1rem;font-weight:600}
+
+/* FOOTER */
+footer{text-align:center;padding:2rem;color:var(--muted);font-size:13px;border-top:1px solid var(--border);margin-top:2rem}
+
+@media(max-width:640px){
+  .organs-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .modal{max-height:95vh;border-radius:20px 20px 0 0}
+  .modal-organ-name{font-size:1.3rem}
+  .header-inner{flex-wrap:wrap;gap:0.8rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">&#129422;</div>
+      <span class="logo-text">Body<span>Atlas</span></span>
+    </a>
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="searchInput" placeholder="Search organs, diseases, treatments..." autocomplete="off">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+</header>
+
+<div class="system-tabs">
+  <div class="tabs-inner" id="systemTabs"></div>
+</div>
+
+<main>
+  <div class="section-header" id="sectionHeader"></div>
+  <div class="organs-grid" id="organsGrid"></div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <button class="modal-close" id="modalClose">&#x2715;</button>
+      <div class="modal-organ-header">
+        <img id="modalImg" src="" alt="">
+        <div>
+          <div class="modal-organ-name" id="modalName"></div>
+          <div class="modal-organ-system" id="modalSystem"></div>
+        </div>
+      </div>
+    </div>
+    <p class="modal-desc" id="modalDesc"></p>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tabAnatomy" onclick="switchTab('anatomy')">&#129520; Anatomy</button>
+      <button class="modal-tab" id="tabDiseases" onclick="switchTab('diseases')">&#129854; Diseases &amp; Cures</button>
+    </div>
+    <div class="modal-content">
+      <div id="panelAnatomy"></div>
+      <div id="panelDiseases" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  BodyAtlas &mdash; Open-source human body reference &nbsp;|&nbsp; <a href="https://github.com/A-tavv/humanbody-doc" style="color:inherit">GitHub</a>
+</footer>
+
+<script>
+const SYSTEMS = {
+  all: { name:"All Systems", color:"#6B7280", bg:"#F3F4F6", icon:"&#127758;" },
+  nervous: { name:"Nervous", color:"#7C3AED", bg:"#EDE9FE", icon:"&#129504;" },
+  cardiovascular: { name:"Cardiovascular", color:"#DC2626", bg:"#FEE2E2", icon:"&#10084;" },
+  respiratory: { name:"Respiratory", color:"#2563EB", bg:"#DBEAFE", icon:"&#129978;" },
+  digestive: { name:"Digestive", color:"#D97706", bg:"#FEF3C7", icon:"&#129748;" },
+  integumentary: { name:"Skin", color:"#EA580C", bg:"#FFEDD5", icon:"&#129529;" },
+  sensory: { name:"Sensory", color:"#059669", bg:"#D1FAE5", icon:"&#128065;" },
+  urinary: { name:"Urinary", color:"#4F46E5", bg:"#E0E7FF", icon:"&#129502;" },
+  musculoskeletal: { name:"Musculoskeletal", color:"#65A30D", bg:"#ECFCCB", icon:"&#129460;" },
+  endocrine: { name:"Endocrine", color:"#DB2777", bg:"#FCE7F3", icon:"&#129514;" },
+  reproductive: { name:"Reproductive", color:"#BE185D", bg:"#FDF2F8", icon:"&#127744;" },
+};
+
+const DATA = [
+  {
+    id:"brain",system:"nervous",name:"Brain",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Grey718.png/200px-Grey718.png",
+    desc:"The brain is the command center of the nervous system, controlling thought, memory, emotion, touch, motor skills, vision, breathing, temperature and every process that regulates the body.",
+    parts:["Cerebrum","Cerebellum","Brainstem","Frontal Lobe","Temporal Lobe","Parietal Lobe","Occipital Lobe","Hippocampus","Amygdala","Thalamus","Hypothalamus","Corpus Callosum","Basal Ganglia","Olfactory Bulb"],
+    diseases:[
+      {name:"Stroke",type:"Acute",emoji:"&#9889;",symptoms:"Sudden numbness, confusion, vision loss, severe headache",
+       cures:{medication:["tPA (thrombolytic)","Aspirin","Clopidogrel","Statins"],surgery:["Mechanical thrombectomy","Carotid endarterectomy"],therapy:["Physiotherapy","Speech therapy","Occupational therapy"]}},
+      {name:"Alzheimer's Disease",type:"Neurodegenerative",emoji:"&#128141;",symptoms:"Memory loss, confusion, mood changes, difficulty speaking",
+       cures:{medication:["Donepezil","Memantine","Rivastigmine","Galantamine"],lifestyle:["Cognitive training","Physical exercise","Mediterranean diet"],therapy:["Behavioral therapy","Caregiver support"]}},
+      {name:"Epilepsy",type:"Neurological",emoji:"&#9889;",symptoms:"Seizures, temporary confusion, staring spells, loss of consciousness",
+       cures:{medication:["Levetiracetam","Valproic acid","Lamotrigine","Carbamazepine"],surgery:["Temporal lobe resection","Vagus nerve stimulation (VNS)","Corpus callosotomy"],lifestyle:["Sleep hygiene","Stress reduction","Ketogenic diet"]}},
+      {name:"Migraine",type:"Neurological",emoji:"&#128164;",symptoms:"Pulsing headache, nausea, vomiting, sensitivity to light/sound",
+       cures:{medication:["Triptans (sumatriptan)","NSAIDs","Beta-blockers","CGRP inhibitors (erenumab)"],lifestyle:["Avoid triggers","Regular sleep","Hydration","Stress management"],therapy:["Biofeedback","CBT"]}},
+      {name:"Parkinson's Disease",type:"Neurodegenerative",emoji:"&#129464;",symptoms:"Tremors, rigidity, slow movement, balance problems",
+       cures:{medication:["Levodopa/Carbidopa","Pramipexole","Selegiline","Amantadine"],surgery:["Deep brain stimulation (DBS)"],therapy:["Physical therapy","Speech therapy","Occupational therapy"]}},
+    ]
+  },
+  {
+    id:"heart",system:"cardiovascular",name:"Heart",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Diagram_of_the_human_heart_%28cropped%29.svg/200px-Diagram_of_the_human_heart_%28cropped%29.svg.png",
+    desc:"A muscular organ that pumps blood through the circulatory system, delivering oxygen and nutrients to every cell and removing carbon dioxide and waste.",
+    parts:["Left Ventricle","Right Ventricle","Left Atrium","Right Atrium","Aorta","Pulmonary Artery","Mitral Valve","Tricuspid Valve","Aortic Valve","Coronary Arteries","Sinoatrial Node","Atrioventricular Node","Pericardium","Myocardium"],
+    diseases:[
+      {name:"Heart Attack (MI)",type:"Acute",emoji:"&#128420;",symptoms:"Chest pain, shortness of breath, sweating, left arm pain",
+       cures:{medication:["Aspirin","Clopidogrel","tPA (thrombolytic)","Statins","Beta-blockers","ACE inhibitors"],surgery:["Percutaneous coronary intervention (PCI/stent)","Coronary artery bypass graft (CABG)"],therapy:["Cardiac rehab","Exercise program"]}},
+      {name:"Hypertension",type:"Chronic",emoji:"&#128200;",symptoms:"Often silent; headache, dizziness, visual changes in severe cases",
+       cures:{medication:["ACE inhibitors (lisinopril)","ARBs (losartan)","Calcium channel blockers","Diuretics (hydrochlorothiazide)","Beta-blockers"],lifestyle:["DASH diet","Reduce salt","Exercise","Weight loss","Quit smoking"]}},
+      {name:"Atrial Fibrillation",type:"Arrhythmia",emoji:"&#128201;",symptoms:"Palpitations, fatigue, dizziness, shortness of breath",
+       cures:{medication:["Anticoagulants (warfarin, apixaban)","Beta-blockers","Flecainide","Amiodarone"],surgery:["Catheter ablation","Cardioversion","Pacemaker/ICD implantation"]}},
+      {name:"Heart Failure",type:"Chronic",emoji:"&#128420;",symptoms:"Shortness of breath, ankle swelling, fatigue, rapid heartbeat",
+       cures:{medication:["ACE inhibitors","Beta-blockers","Diuretics","SGLT2 inhibitors"],surgery:["ICD / CRT device","Heart transplant","LVAD (ventricular assist device)"],lifestyle:["Fluid restriction","Low-sodium diet","Daily weight monitoring"]}},
+    ]
+  },
+  {
+    id:"lungs",system:"respiratory",name:"Lungs",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/2312_Gross_Anatomy_of_the_Lungs.jpg/200px-2312_Gross_Anatomy_of_the_Lungs.jpg",
+    desc:"Paired organs responsible for gas exchange — inhaling oxygen into the bloodstream and expelling carbon dioxide. The right lung has three lobes; the left has two.",
+    parts:["Trachea","Bronchi","Bronchioles","Alveoli","Pleura","Diaphragm","Right Lobe (3)","Left Lobe (2)","Pulmonary Vessels","Cilia","Surfactant","Hila"],
+    diseases:[
+      {name:"COVID-19",type:"Viral Infection",emoji:"&#128222;",symptoms:"Fever, cough, shortness of breath, loss of smell/taste, fatigue",
+       cures:{vaccine:["mRNA vaccine (Pfizer, Moderna)","Protein subunit (Novavax)","Boosters"],medication:["Nirmatrelvir/ritonavir (Paxlovid)","Remdesivir","Dexamethasone (severe cases)","Baricitinib"],therapy:["Oxygen therapy","Prone positioning","Ventilatory support"]}},
+      {name:"Asthma",type:"Chronic",emoji:"&#127744;",symptoms:"Wheezing, chest tightness, shortness of breath, coughing",
+       cures:{medication:["Short-acting beta-agonists (SABA) — salbutamol inhaler","Inhaled corticosteroids (ICS) — budesonide","LABA — salmeterol","Montelukast","Biologics — omalizumab, mepolizumab"],lifestyle:["Avoid triggers","Air purifier","Exercise-induced management"],therapy:["Breathing exercises","Allergy immunotherapy"]}},
+      {name:"Pneumonia",type:"Infection",emoji:"&#129754;",symptoms:"Fever, chills, cough with phlegm, chest pain, difficulty breathing",
+       cures:{medication:["Amoxicillin (bacterial)","Azithromycin","Oseltamivir (viral)","Antifungals (fluconazole)"],therapy:["Oxygen support","Physiotherapy","Hydration","Rest"]}},
+      {name:"COPD",type:"Chronic",emoji:"&#128167;",symptoms:"Chronic cough, increased mucus, shortness of breath, wheezing",
+       cures:{medication:["LAMA — tiotropium","LABA — formoterol","ICS","Roflumilast","Theophylline"],surgery:["Lung volume reduction","Bullectomy","Lung transplant"],lifestyle:["Quit smoking (most critical)","Pulmonary rehab","Oxygen therapy"]}},
+      {name:"Lung Cancer",type:"Malignant",emoji:"&#129504;",symptoms:"Persistent cough, hemoptysis, weight loss, chest pain",
+       cures:{medication:["Chemotherapy (cisplatin, pemetrexed)","Immunotherapy (pembrolizumab, nivolumab)","Targeted therapy (osimertinib — EGFR+)"],surgery:["Lobectomy","Pneumonectomy","Wedge resection"],therapy:["Radiation therapy","Stereotactic body radiation (SBRT)"]}},
+    ]
+  },
+  {
+    id:"eye",system:"sensory",name:"Eye",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Schematic_diagram_of_the_human_eye_en.svg/200px-Schematic_diagram_of_the_human_eye_en.svg.png",
+    desc:"A complex sensory organ that detects light and converts it into neural signals, enabling vision. It works much like a camera with a variable aperture, adjustable lens, and light-sensitive retina.",
+    parts:["Cornea","Iris","Pupil","Lens","Retina","Macula","Fovea","Optic Nerve","Vitreous Humor","Aqueous Humor","Ciliary Body","Sclera","Choroid","Conjunctiva","Lacrimal Gland","Rods","Cones"],
+    diseases:[
+      {name:"Glaucoma",type:"Pressure",emoji:"&#128065;",symptoms:"Gradual vision loss, tunnel vision, eye pain, halos around lights",
+       cures:{medication:["Beta-blockers (timolol eye drops)","Prostaglandins (latanoprost)","Alpha agonists","Carbonic anhydrase inhibitors"],surgery:["Trabeculectomy","Laser trabeculoplasty (SLT)","Glaucoma drainage implants"]}},
+      {name:"Cataracts",type:"Degenerative",emoji:"&#128256;",symptoms:"Blurry vision, glare sensitivity, fading colors, double vision",
+       cures:{surgery:["Phacoemulsification + intraocular lens (IOL)","Extracapsular cataract extraction"],lifestyle:["UV protection sunglasses","Manage diabetes","Avoid steroids long-term"]}},
+      {name:"Macular Degeneration",type:"Degenerative",emoji:"&#128257;",symptoms:"Blurred central vision, straight lines appear wavy, dark area in center",
+       cures:{medication:["Anti-VEGF injections (ranibizumab, bevacizumab, aflibercept)","AREDS2 supplements (Vitamin C, E, zinc, lutein)"],therapy:["Photodynamic therapy","Low vision aids"],lifestyle:["Quit smoking","Leafy greens diet","UV protection"]}},
+      {name:"Diabetic Retinopathy",type:"Vascular",emoji:"&#128202;",symptoms:"Blurred vision, floaters, dark spots, gradual vision loss",
+       cures:{medication:["Anti-VEGF injections","Corticosteroid implants"],surgery:["Laser photocoagulation","Vitrectomy"],lifestyle:["Control blood sugar","Control blood pressure","HbA1c <7%"]}},
+    ]
+  },
+  {
+    id:"skin",system:"integumentary",name:"Skin",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Skin_layers.svg/200px-Skin_layers.svg.png",
+    desc:"The largest organ of the body, forming a protective barrier against the environment, regulating temperature, and providing sensory information about the world.",
+    parts:["Epidermis","Dermis","Hypodermis (subcutaneous)","Keratinocytes","Melanocytes","Hair Follicles","Sebaceous Glands","Sweat Glands","Nerve Endings","Blood Vessels","Langerhans Cells","Fibroblasts"],
+    diseases:[
+      {name:"Eczema (Atopic Dermatitis)",type:"Inflammatory",emoji:"&#129484;",symptoms:"Itchy, red, inflamed skin; dry patches; blistering",
+       cures:{medication:["Topical corticosteroids (hydrocortisone, betamethasone cream)","Tacrolimus / pimecrolimus (calcineurin inhibitors)","Dupilumab (Dupixent) — biologic","Antihistamines (loratadine)"],lifestyle:["Fragrance-free moisturizers","Avoid triggers (soap, allergens)","Short lukewarm showers"],therapy:["Wet wrap therapy","Phototherapy (UVB)"]}},
+      {name:"Psoriasis",type:"Autoimmune",emoji:"&#129535;",symptoms:"Red scaly plaques, silvery scales, itching, nail changes",
+       cures:{medication:["Topical steroids","Vitamin D analogs (calcipotriol)","Methotrexate","Biologics (adalimumab, secukinumab, ustekinumab)","Apremilast"],therapy:["PUVA phototherapy","UVB phototherapy"],lifestyle:["Reduce stress","Avoid triggers","Emollients"]}},
+      {name:"Acne Vulgaris",type:"Inflammatory",emoji:"&#128150;",symptoms:"Blackheads, whiteheads, pimples, cysts, oily skin",
+       cures:{medication:["Benzoyl peroxide","Retinoids (tretinoin, adapalene)","Antibiotics (clindamycin, doxycycline)","Isotretinoin (severe)","Hormonal therapy (spironolactone)"],lifestyle:["Non-comedogenic products","Gentle cleansing","Avoid touching face"]}},
+      {name:"Melanoma",type:"Malignant",emoji:"&#9888;",symptoms:"Changing mole, irregular border, multiple colors, large size (ABCDE rule)",
+       cures:{surgery:["Wide local excision","Sentinel lymph node biopsy","Lymph node dissection"],medication:["Immunotherapy (pembrolizumab, nivolumab)","BRAF inhibitors (vemurafenib — BRAF+)","MEK inhibitors","Ipilimumab"],therapy:["Radiation therapy","Targeted therapy"]}},
+    ]
+  },
+  {
+    id:"liver",system:"digestive",name:"Liver",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Blausen_0428_GallbladderAnatomy.png/200px-Blausen_0428_GallbladderAnatomy.png",
+    desc:"The largest internal organ, performing over 500 vital functions including detoxification, protein synthesis, bile production, glucose regulation, and metabolism of fats, carbohydrates, and proteins.",
+    parts:["Right Lobe","Left Lobe","Caudate Lobe","Quadrate Lobe","Hepatocytes","Kupffer Cells","Bile Ducts","Portal Vein","Hepatic Artery","Sinusoids","Lobules","Gallbladder","Common Bile Duct"],
+    diseases:[
+      {name:"Hepatitis B",type:"Viral Infection",emoji:"&#128222;",symptoms:"Fatigue, jaundice, abdominal pain, dark urine, nausea",
+       cures:{vaccine:["HBV vaccine (3-dose series)","HBIG (post-exposure)"],medication:["Tenofovir","Entecavir","Pegylated interferon-alpha"],therapy:["Monitor liver function","Avoid alcohol"]}},
+      {name:"Hepatitis C",type:"Viral Infection",emoji:"&#128222;",symptoms:"Often asymptomatic early; fatigue, jaundice, right upper quadrant pain",
+       cures:{medication:["Sofosbuvir/ledipasvir (Harvoni)","Glecaprevir/pibrentasvir (Mavyret)","Sofosbuvir/velpatasvir — 8–12 week cure rate >95%"],therapy:["Alcohol abstinence","Monitor fibrosis"]}},
+      {name:"Cirrhosis",type:"Chronic",emoji:"&#128203;",symptoms:"Fatigue, jaundice, ascites, easy bruising, spider veins",
+       cures:{medication:["Diuretics (spironolactone, furosemide) for ascites","Beta-blockers (propranolol) for varices","Lactulose for encephalopathy","Rifaximin"],surgery:["TIPS procedure","Liver transplant (end-stage)"],lifestyle:["Complete alcohol abstinence","Low-sodium diet","Treat underlying cause"]}},
+      {name:"Non-alcoholic Fatty Liver (NAFLD/NASH)",type:"Metabolic",emoji:"&#129361;",symptoms:"Often asymptomatic; fatigue, right upper quadrant discomfort, enlarged liver",
+       cures:{medication:["Vitamin E (NASH without diabetes)","Pioglitazone","Semaglutide (emerging)","Lanifibranor (clinical trials)"],lifestyle:["Weight loss (7–10% body weight)","Mediterranean diet","Exercise 150 min/week","Control diabetes, lipids"]}},
+    ]
+  },
+  {
+    id:"kidney",system:"urinary",name:"Kidneys",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Blausen_0592_KidneyAnatomy_01.png/200px-Blausen_0592_KidneyAnatomy_01.png",
+    desc:"Bean-shaped organs that filter blood, removing waste and excess fluid as urine. They also regulate blood pressure, red blood cell production, and bone health through hormone production.",
+    parts:["Renal Cortex","Renal Medulla","Nephrons","Glomerulus","Bowman's Capsule","Proximal Tubule","Loop of Henle","Distal Tubule","Collecting Duct","Renal Pelvis","Ureter","Renal Artery","Renal Vein"],
+    diseases:[
+      {name:"Kidney Stones",type:"Structural",emoji:"&#128142;",symptoms:"Severe flank pain, blood in urine, nausea, frequent urination",
+       cures:{medication:["NSAIDs (pain)","Alpha-blockers (tamsulosin — aid passage)","Potassium citrate (calcium oxalate stones)","Allopurinol (uric acid stones)"],surgery:["Shock wave lithotripsy (SWL)","Ureteroscopy + laser","Percutaneous nephrolithotomy (large stones)"],lifestyle:["High fluid intake (2.5–3L/day)","Low-sodium diet","Reduce oxalate foods"]}},
+      {name:"Chronic Kidney Disease (CKD)",type:"Chronic",emoji:"&#128200;",symptoms:"Fatigue, swelling, decreased urination, nausea, high blood pressure",
+       cures:{medication:["ACE inhibitors / ARBs (slow progression)","SGLT2 inhibitors (dapagliflozin)","Finerenone","Erythropoietin (for anemia)"],surgery:["Hemodialysis","Peritoneal dialysis","Kidney transplant"],lifestyle:["Low-protein diet","Low-potassium diet","Blood pressure control","Diabetes control"]}},
+      {name:"Urinary Tract Infection (UTI)",type:"Infection",emoji:"&#128128;",symptoms:"Burning urination, frequent urge to urinate, cloudy urine, pelvic pain",
+       cures:{medication:["Trimethoprim-sulfamethoxazole","Nitrofurantoin","Fosfomycin","Ciprofloxacin (complicated)"],lifestyle:["Increase fluid intake","Cranberry (preventive)","Urinate after intercourse"]}},
+    ]
+  },
+  {
+    id:"stomach",system:"digestive",name:"Stomach",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Gray1046.svg/200px-Gray1046.svg.png",
+    desc:"A muscular, J-shaped organ that receives food from the esophagus, churns it with digestive juices, and releases it gradually into the small intestine for further digestion.",
+    parts:["Fundus","Cardia","Body (Corpus)","Antrum","Pylorus","Greater Curvature","Lesser Curvature","Rugae","Gastric Glands","Chief Cells","Parietal Cells","Mucosa","Submucosa","Muscularis"],
+    diseases:[
+      {name:"Peptic Ulcer",type:"Mucosal",emoji:"&#128197;",symptoms:"Burning stomach pain, bloating, heartburn, nausea, dark stools",
+       cures:{medication:["Proton pump inhibitors — omeprazole, pantoprazole","H2 blockers — famotidine","H. pylori triple therapy: PPI + clarithromycin + amoxicillin (7–14 days)","Bismuth subsalicylate"],lifestyle:["Avoid NSAIDs","No alcohol/smoking","Reduce stress"]}},
+      {name:"GERD",type:"Functional",emoji:"&#128167;",symptoms:"Heartburn, acid regurgitation, chest pain, difficulty swallowing",
+       cures:{medication:["Antacids (calcium carbonate)","H2 blockers","PPIs (omeprazole)","Prokinetics (metoclopramide)"],surgery:["Laparoscopic Nissen fundoplication","LINX device"],lifestyle:["Elevate bed head","Avoid lying after eating","Small meals","Avoid coffee, chocolate, spicy food"]}},
+      {name:"Gastric Cancer",type:"Malignant",emoji:"&#9888;",symptoms:"Indigestion, weight loss, abdominal pain, early satiety, dysphagia",
+       cures:{surgery:["Gastrectomy (partial or total)","Laparoscopic gastrectomy"],medication:["Chemotherapy: FLOT regimen (fluorouracil, leucovorin, oxaliplatin, docetaxel)","Immunotherapy: nivolumab","Targeted: trastuzumab (HER2+)"],therapy:["Radiation therapy","Palliative care"]}},
+    ]
+  },
+  {
+    id:"ear",system:"sensory",name:"Ear",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Ear_anatomy_en.svg/200px-Ear_anatomy_en.svg.png",
+    desc:"The auditory organ responsible for hearing and balance. It converts sound waves into neural signals and detects changes in head position for equilibrium.",
+    parts:["Outer Ear (Pinna)","Ear Canal","Eardrum (Tympanic Membrane)","Malleus","Incus","Stapes","Cochlea","Semicircular Canals","Eustachian Tube","Auditory Nerve","Basilar Membrane","Hair Cells","Oval Window","Round Window"],
+    diseases:[
+      {name:"Otitis Media",type:"Infection",emoji:"&#129756;",symptoms:"Ear pain, fever, difficulty hearing, fluid discharge, irritability (children)",
+       cures:{medication:["Amoxicillin (bacterial)","Amoxicillin-clavulanate","Analgesics (pain)"],surgery:["Myringotomy (tympanostomy tubes)"],lifestyle:["Watchful waiting (mild cases)","Breastfeeding (preventive)","Avoid secondhand smoke"]}},
+      {name:"Tinnitus",type:"Neurological",emoji:"&#128266;",symptoms:"Ringing, buzzing, or roaring sound without external source",
+       cures:{therapy:["Cognitive behavioral therapy (CBT)","Sound therapy / white noise","Tinnitus retraining therapy (TRT)"],medication:["Antidepressants (amitriptyline — severe)","Alprazolam (short-term)"],lifestyle:["Protect from loud noise","Reduce caffeine/salt","Manage stress"]}},
+      {name:"Hearing Loss",type:"Degenerative",emoji:"&#128266;",symptoms:"Muffled sounds, asking people to repeat, difficulty in noisy environments",
+       cures:{surgery:["Cochlear implants (severe SNHL)","Ossiculoplasty (conductive)","Stapedectomy (otosclerosis)"],medication:["Corticosteroids (sudden SNHL)"],lifestyle:["Hearing aids","Sign language","Assistive devices"]}},
+    ]
+  },
+  {
+    id:"spinalcord",system:"nervous",name:"Spinal Cord",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Spinal_cord_diagramg.svg/200px-Spinal_cord_diagramg.svg.png",
+    desc:"A long, thin, tubular structure of nervous tissue extending from the brainstem, acting as the main pathway for information between brain and body, and coordinating reflex actions.",
+    parts:["Cervical Spine (C1-C8)","Thoracic Spine (T1-T12)","Lumbar Spine (L1-L5)","Sacral Spine (S1-S5)","Grey Matter","White Matter","Dorsal Horn","Ventral Horn","Dorsal Root Ganglia","Dura Mater","Arachnoid","Pia Mater","Central Canal"],
+    diseases:[
+      {name:"Disc Herniation",type:"Structural",emoji:"&#129396;",symptoms:"Back/neck pain radiating to limbs, numbness, tingling, muscle weakness",
+       cures:{medication:["NSAIDs (ibuprofen, naproxen)","Muscle relaxants (cyclobenzaprine)","Epidural steroid injections","Gabapentin (nerve pain)"],surgery:["Microdiscectomy","Laminectomy","Spinal fusion (complex cases)"],therapy:["Physical therapy","Chiropractic care","Traction"]}},
+      {name:"Multiple Sclerosis",type:"Autoimmune",emoji:"&#129504;",symptoms:"Fatigue, vision problems, numbness, balance issues, cognitive changes",
+       cures:{medication:["Interferons (interferon beta-1a)","Natalizumab (Tysabri)","Ocrelizumab (Ocrevus)","Siponimod","Cladribine"],therapy:["Physical therapy","Occupational therapy","Speech therapy"],lifestyle:["Exercise","Vitamin D supplementation","Low-fat diet"]}},
+    ]
+  },
+  {
+    id:"bone",system:"musculoskeletal",name:"Bones",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Blausen_0229_CompactBone.png/200px-Blausen_0229_CompactBone.png",
+    desc:"The rigid organs that form the skeleton, providing structure, protecting organs, enabling movement, producing blood cells in bone marrow, and storing minerals like calcium and phosphorus.",
+    parts:["Cortical (Compact) Bone","Trabecular (Spongy) Bone","Periosteum","Endosteum","Bone Marrow","Osteocytes","Osteoblasts","Osteoclasts","Haversian Canals","Epiphysis","Diaphysis","Metaphysis","Growth Plate","Articular Cartilage"],
+    diseases:[
+      {name:"Osteoporosis",type:"Metabolic",emoji:"&#129460;",symptoms:"Often silent until fracture; back pain, loss of height, stooped posture",
+       cures:{medication:["Bisphosphonates (alendronate, zoledronic acid)","Denosumab","Teriparatide (severe)","Romosozumab","Calcium + Vitamin D supplements"],lifestyle:["Weight-bearing exercise","Quit smoking","Reduce alcohol","Fall prevention"],therapy:["Balance training","Hip protectors"]}},
+      {name:"Fractures",type:"Traumatic",emoji:"&#128296;",symptoms:"Pain, swelling, deformity, bruising, inability to use limb",
+       cures:{surgery:["Open reduction internal fixation (ORIF)","Intramedullary nailing","Total hip replacement (femoral neck)"],therapy:["Casting/splinting","Physical therapy","Physiotherapy"],medication:["Analgesics","Calcium + Vitamin D (healing)"]}},
+      {name:"Osteoarthritis",type:"Degenerative",emoji:"&#129464;",symptoms:"Joint pain, stiffness (morning), crepitus, reduced range of motion",
+       cures:{medication:["Paracetamol","NSAIDs","Topical diclofenac","Intra-articular corticosteroids","Hyaluronic acid injections"],surgery:["Total joint replacement (hip, knee)","Arthroscopy","Osteotomy"],lifestyle:["Weight loss","Low-impact exercise","Physical therapy"]}},
+    ]
+  },
+  {
+    id:"thyroid",system:"endocrine",name:"Thyroid",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Blausen_0191_CervicalRegion.png/200px-Blausen_0191_CervicalRegion.png",
+    desc:"A butterfly-shaped gland in the neck that produces hormones (T3, T4) regulating metabolism, heart rate, body temperature, and growth.",
+    parts:["Right Lobe","Left Lobe","Isthmus","Follicular Cells","Parafollicular (C) Cells","Thyroid Follicles","Thyroid Hormone (T4)","Triiodothyronine (T3)","Calcitonin","Parathyroid Glands (adjacent)"],
+    diseases:[
+      {name:"Hypothyroidism",type:"Endocrine",emoji:"&#128200;",symptoms:"Fatigue, weight gain, cold intolerance, constipation, depression, dry skin",
+       cures:{medication:["Levothyroxine (L-T4) — daily replacement","Liothyronine (T3, combination)"],lifestyle:["Regular TSH monitoring","Take medication on empty stomach"]}},
+      {name:"Hyperthyroidism (Graves' Disease)",type:"Autoimmune",emoji:"&#128201;",symptoms:"Weight loss, heat intolerance, palpitations, tremor, exophthalmos",
+       cures:{medication:["Methimazole","Propylthiouracil (PTU)","Beta-blockers (symptomatic)"],surgery:["Thyroidectomy"],therapy:["Radioactive iodine (RAI) therapy"]}},
+      {name:"Thyroid Cancer",type:"Malignant",emoji:"&#9888;",symptoms:"Neck lump, hoarseness, difficulty swallowing, enlarged lymph nodes",
+       cures:{surgery:["Total thyroidectomy","Neck dissection"],therapy:["Radioactive iodine (RAI)","External beam radiation"],medication:["Levothyroxine (TSH suppression)","Lenvatinib (advanced)","Sorafenib"]}},
+    ]
+  },
+];
+
+let activeSystem = 'all';
+let currentOrgan = null;
+let activeTab = 'anatomy';
+
+function getSystem(id){ return SYSTEMS[id] || SYSTEMS.all; }
+
+function buildTabs(){
+  const container = document.getElementById('systemTabs');
+  container.innerHTML = Object.entries(SYSTEMS).map(([key,s])=>
+    `<button class="tab-btn${key===activeSystem?' active':''}" data-system="${key}" 
+     style="color:${key===activeSystem?s.color:'var(--muted)'};border-bottom-color:${key===activeSystem?s.color:'transparent'}"
+     onclick="setSystem('${key}')">
+      <span style="font-size:14px">${s.icon}</span> ${s.name}
+     </button>`
+  ).join('');
+}
+
+function setSystem(key){
+  activeSystem = key;
+  buildTabs();
+  renderOrgans();
+}
+
+function renderOrgans(){
+  const sys = getSystem(activeSystem);
+  const header = document.getElementById('sectionHeader');
+  const grid = document.getElementById('organsGrid');
+  const organs = activeSystem==='all' ? DATA : DATA.filter(o=>o.system===activeSystem);
+  
+  header.innerHTML = `
+    <div class="section-title" style="color:${sys.color}">${sys.icon} ${sys.name==='All Systems'?'All Organs':sys.name}</div>
+    <span class="section-badge" style="background:${sys.bg};color:${sys.color}">${organs.length} organs</span>
+  `;
+
+  if(organs.length===0){
+    grid.innerHTML=`<div class="empty-state"><div class="empty-state-emoji">&#128269;</div><div class="empty-state-text">No organs in this system yet. Coming soon!</div></div>`;
+    return;
+  }
+
+  grid.innerHTML = organs.map(organ=>{
+    const s = getSystem(organ.system);
+    return `
+    <div class="organ-card" onclick="openOrgan('${organ.id}')" style="border-color:${s.color}22">
+      <div class="card-banner" style="background:linear-gradient(135deg,${s.bg},${s.color}22)">
+        <img src="${organ.img}" alt="${organ.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy">
+        <div style="display:none;width:80px;height:80px;background:${s.bg};border-radius:50%;align-items:center;justify-content:center;font-size:2.5rem">${s.icon}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${organ.name}</div>
+        <div class="card-parts-count" style="color:${s.color}">${organ.parts.length} anatomical parts</div>
+        <div class="card-tags">
+          ${organ.parts.slice(0,3).map(p=>`<span class="card-tag" style="background:${s.bg};color:${s.color}">${p}</span>`).join('')}
+          ${organ.parts.length>3?`<span class="card-tag" style="background:#f3f4f6;color:#6b7280">+${organ.parts.length-3}</span>`:''}
+        </div>
+        <div class="card-disease-count" style="color:${s.color}">&#9889; ${organ.diseases.length} tracked diseases</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openOrgan(id){
+  currentOrgan = DATA.find(o=>o.id===id);
+  if(!currentOrgan) return;
+  const sys = getSystem(currentOrgan.system);
+  document.getElementById('modalImg').src = currentOrgan.img;
+  document.getElementById('modalImg').onerror = function(){this.style.display='none'};
+  document.getElementById('modalName').textContent = currentOrgan.name;
+  document.getElementById('modalSystem').innerHTML = `<span style="color:${sys.color};font-weight:800">${sys.icon} ${sys.name} System</span>`;
+  document.getElementById('modalDesc').textContent = currentOrgan.desc;
+  document.getElementById('modal').style.setProperty('--accent', sys.color);
+  switchTab('anatomy');
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function switchTab(tab){
+  activeTab = tab;
+  const sys = getSystem(currentOrgan?.system||'all');
+  document.getElementById('tabAnatomy').className = 'modal-tab'+(tab==='anatomy'?' active':'');
+  document.getElementById('tabDiseases').className = 'modal-tab'+(tab==='diseases'?' active':'');
+  document.getElementById('panelAnatomy').style.display = tab==='anatomy'?'':'none';
+  document.getElementById('panelDiseases').style.display = tab==='diseases'?'':'none';
+  if(tab==='anatomy') renderAnatomy();
+  else renderDiseases();
+}
+
+function renderAnatomy(){
+  if(!currentOrgan) return;
+  const sys = getSystem(currentOrgan.system);
+  document.getElementById('panelAnatomy').innerHTML = `
+    <h3 style="font-size:14px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">Anatomical Parts</h3>
+    <div class="anatomy-grid">
+      ${currentOrgan.parts.map((p,i)=>
+        `<span class="anatomy-part" style="background:${sys.bg};color:${sys.color};border:1.5px solid ${sys.color}33">${p}</span>`
+      ).join('')}
+    </div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-top:1rem">${currentOrgan.desc}</p>
+  `;
+}
+
+function renderDiseases(){
+  if(!currentOrgan) return;
+  const sys = getSystem(currentOrgan.system);
+  const html = currentOrgan.diseases.map((d,i)=>{
+    const cures = d.cures;
+    const sections = Object.entries(cures).map(([type,items])=>{
+      const label = {medication:'&#128138; Medications',vaccine:'&#128137; Vaccines',surgery:'&#128295; Surgery / Procedures',therapy:'&#129333; Therapy',lifestyle:'&#127808; Lifestyle'}[type]||type;
+      const cls = {medication:'',vaccine:'vaccine',surgery:'surgery',therapy:'therapy',lifestyle:'lifestyle'}[type]||'';
+      return `<div style="margin-bottom:10px">
+        <div class="cure-section-title">${label}</div>
+        <div class="cure-pills">${items.map(c=>`<span class="cure-pill ${cls}">${c}</span>`).join('')}</div>
+      </div>`;
+    }).join('');
+    const typeColor = {Acute:'#DC2626',Chronic:'#D97706',Infection:'#2563EB','Viral Infection':'#2563EB',Malignant:'#7C3AED',Autoimmune:'#DB2777',Degenerative:'#6B7280',Inflammatory:'#EA580C',Neurological:'#7C3AED',Neurodegenerative:'#7C3AED',Pressure:'#059669',Structural:'#65A30D',Vascular:'#DC2626',Traumatic:'#D97706',Endocrine:'#DB2777',Metabolic:'#D97706',Functional:'#2563EB',Arrhythmia:'#DC2626',Mucosal:'#EA580C'}[d.type]||sys.color;
+    return `
+    <div class="disease-item" id="dis-${i}">
+      <div class="disease-header" onclick="toggleDisease(${i})">
+        <div class="disease-icon" style="background:${typeColor}18;font-size:18px">${d.emoji}</div>
+        <div class="disease-name">${d.name}</div>
+        <span class="disease-type-badge" style="background:${typeColor}15;color:${typeColor}">${d.type}</span>
+        <span class="disease-arrow">&#9660;</span>
+      </div>
+      <div class="disease-body">
+        <div class="disease-body-inner">
+          ${d.symptoms?`<div><div class="cure-section-title">&#129298; Symptoms</div><div class="disease-symptoms">${d.symptoms}</div></div>`:''}
+          ${sections}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('panelDiseases').innerHTML = `<div class="disease-list">${html}</div>`;
+}
+
+function toggleDisease(i){
+  const el = document.getElementById('dis-'+i);
+  el.classList.toggle('open');
+}
+
+// SEARCH
+function buildSearchIndex(){
+  const index = [];
+  DATA.forEach(organ=>{
+    const sys = getSystem(organ.system);
+    index.push({type:'organ',name:organ.name,sub:sys.name+' System',color:sys.color,organId:organ.id});
+    organ.diseases.forEach(d=>{
+      index.push({type:'disease',name:d.name,sub:'in '+organ.name,color:'#DC2626',organId:organ.id});
+    });
+    organ.parts.forEach(p=>{
+      index.push({type:'part',name:p,sub:'Part of '+organ.name,color:'#6B7280',organId:organ.id});
+    });
+  });
+  return index;
+}
+
+const searchIndex = buildSearchIndex();
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+searchInput.addEventListener('input',()=>{
+  const q = searchInput.value.trim().toLowerCase();
+  if(q.length<2){searchResults.classList.remove('active');return;}
+  const results = searchIndex.filter(item=>item.name.toLowerCase().includes(q)).slice(0,10);
+  if(!results.length){searchResults.classList.remove('active');return;}
+  searchResults.innerHTML = results.map(r=>`
+    <div class="search-item" onclick="handleSearchClick('${r.organId}')">
+      <div class="search-item-dot" style="background:${r.color}"></div>
+      <div>
+        <div class="search-item-name">${r.name}</div>
+        <div class="search-item-sub">${r.sub}</div>
+      </div>
+    </div>`).join('');
+  searchResults.classList.add('active');
+});
+
+function handleSearchClick(organId){
+  searchResults.classList.remove('active');
+  searchInput.value='';
+  openOrgan(organId);
+}
+
+document.addEventListener('click',e=>{
+  if(!searchInput.contains(e.target)&&!searchResults.contains(e.target)) searchResults.classList.remove('active');
+});
+
+document.getElementById('modalClose').onclick = closeModal;
+document.getElementById('modalOverlay').onclick = e=>{ if(e.target===document.getElementById('modalOverlay')) closeModal(); };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+buildTabs();
+renderOrgans();
+</script>
+</body>
+</html>
