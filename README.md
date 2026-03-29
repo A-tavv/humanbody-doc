@@ -1,14 +1,14 @@
 # HumanBodyDoc
 
-> An open-source, interactive reference of human anatomy, diseases, and treatments — built as a single, deployable HTML file.
+> An open-source, interactive reference of human anatomy, diseases, and treatments built as a single, deployable HTML file.
 
-**[🌐 Live Site](https://a-tavv.github.io/humanbody-doc)** &nbsp;|&nbsp; **[📁 Source](https://github.com/A-tavv/humanbody-doc)**
+**[🌐 Live Site](https://a-tavv.github.io/humanbody-doc)**
 
 ---
 
 ## What is HumanBodyDoc?
 
-HumanBodyDoc is a structured, visual knowledge base of the human body — covering organs, their anatomical parts, associated diseases, symptoms, and known treatments. It's designed for students, curious learners, and anyone who wants a clean, searchable medical reference without the noise of Wikipedia or the paywall of medical databases.
+HumanBodyDoc is a structured, visual knowledge base of the human body covering organs, their anatomical parts, associated diseases, symptoms, and known treatments. It's designed for students, researchers, curious learners, and anyone who wants a clean, searchable medical reference without the noise of Wikipedia or the paywall of medical databases.
 
 ---
 
@@ -38,8 +38,6 @@ HumanBodyDoc is a structured, visual knowledge base of the human body — coveri
 | 🧴 Integumentary | Skin |
 | 💧 Urinary | Kidneys |
 | 🦋 Endocrine | Thyroid |
-
-> More organs being added — contributions welcome!
 
 ---
 
