@@ -1,4 +1,4 @@
-# 🫀 BodyAtlas — Human Body Explorer
+# HumanBodyDoc
 
 > An open-source, interactive reference of human anatomy, diseases, and treatments — built as a single, deployable HTML file.
 
@@ -6,9 +6,9 @@
 
 ---
 
-## What is BodyAtlas?
+## What is HumanBodyDoc?
 
-BodyAtlas is a structured, visual knowledge base of the human body — covering organs, their anatomical parts, associated diseases, symptoms, and known treatments. It's designed for students, curious learners, and anyone who wants a clean, searchable medical reference without the noise of Wikipedia or the paywall of medical databases.
+HumanBodyDoc is a structured, visual knowledge base of the human body — covering organs, their anatomical parts, associated diseases, symptoms, and known treatments. It's designed for students, curious learners, and anyone who wants a clean, searchable medical reference without the noise of Wikipedia or the paywall of medical databases.
 
 ---
 
@@ -50,7 +50,7 @@ No installation needed. Just open `index.html` in any browser.
 ```bash
 git clone https://github.com/A-tavv/humanbody-doc.git
 cd humanbody-doc
-open index.html   # macOS
+open index.html
 # or double-click index.html on Windows/Linux
 ```
 
@@ -84,7 +84,7 @@ humanbody-doc/
 We welcome contributions — especially:
 - New organs and body systems
 - Additional diseases, symptoms, and treatments
-- Translations (Arabic, Persian, French, etc.)
+- Translations
 - Better medical images or diagrams
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed instructions.
@@ -94,7 +94,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed instructions.
 ## Roadmap
 
 - [ ] Clickable 3D body diagram as entry point
-- [ ] Persian (فارسی) and Arabic language support
+- [ ] Different language support
 - [ ] Drug interaction checker
 - [ ] Printable organ fact sheets (PDF)
 - [ ] Mobile app (PWA)
