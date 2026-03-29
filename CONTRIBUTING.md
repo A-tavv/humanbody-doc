@@ -104,4 +104,4 @@ If you find incorrect medical information, please open an **Issue** with:
 
 ## Code of Conduct
 
-Be respectful. This is a health education project — accuracy and clarity matter more than speed. Cite sources where possible.
+Be respectful. This is a health education project, accuracy and clarity matter more than speed. Cite sources where possible.
